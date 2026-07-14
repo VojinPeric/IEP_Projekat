@@ -1,0 +1,91 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# --- Environment / secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Flask ---
+instance/
+.webassets-cache
+flask_session/
+
+# --- Testing / coverage / type checking ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.cache/
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Databases (local dev, if not using temp folder) ---
+*.sqlite3
+*.db
+
+# --- Docker ---
+docker-compose.override.yml
+.docker/
+
+# --- Kubernetes (local/dev generated manifests, secrets) ---
+*.local.yaml
+*.local.yml
+kubeconfig
+kubeconfig.yaml
+secrets.yaml
+secrets/
+*-secret.yaml
+
+# --- Local persistent storage (mapped to temp folder for local dev) ---
+temp/
+
+# --- Editors / IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Node (if using any frontend tooling) ---
+node_modules/
