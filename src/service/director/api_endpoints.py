@@ -25,8 +25,12 @@ def pending_orders():
 @director_blueprint.route("/decision", methods = ["POST"])
 @role_check(Role.DIRECTOR)
 def decision():
-    uuid = request.json.get("uuid", "")
-    approved = request.json.get("approved", None)
+    body = request.get_json(silent=True)
+    if body is None:
+        return { "message": "Request body must be JSON." }, 400
+
+    uuid = body.get("uuid", "")
+    approved = body.get("approved", None)
 
     if len(uuid) == 0:
         return { "message": "Field uuid is missing." }, 400

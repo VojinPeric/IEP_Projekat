@@ -19,11 +19,19 @@ VALID_OPERATORS = { "eq", "ne", "gt", "gte", "lt", "lte", "in", "nin" }
 @employee_blueprint.route("/search", methods = ["POST"])
 @role_check(Role.EMPLOYEE)
 def search():
-    name = request.json.get("name", None)
-    category = request.json.get("category", None)
-    buying_date = request.json.get("buying_date", None)
-    selling_date = request.json.get("selling_date", None)
-    info_filters = request.json.get("info_filters", None)
+    body = request.get_json(silent=True)
+    if body is None:
+        name = None
+        category = None
+        buying_date = None
+        selling_date = None
+        info_filters = None
+    else:
+        name = body.get("name", None)
+        category = body.get("category", None)
+        buying_date = body.get("buying_date", None)
+        selling_date = body.get("selling_date", None)
+        info_filters = body.get("info_filters", None)
 
     if name is not None and len(name) > 256:
         return { "message": "Name must be at most 256 characters." }, 400
@@ -77,12 +85,16 @@ def search():
 @employee_blueprint.route("/create_buy_order", methods = ["POST"])
 @role_check(Role.EMPLOYEE)
 def create_buy_order():
-    name = request.json.get("name", None)
-    categories = request.json.get("categories", None)
-    buying_price = request.json.get("buying_price", None)
-    info = request.json.get("info", None)
+    body = request.get_json(silent=True)
+    if body is None:
+        return { "message": "Request body must be JSON." }, 400
 
-    if name is None:
+    name = body.get("name", None)
+    categories = body.get("categories", None)
+    buying_price = body.get("buying_price", None)
+    info = body.get("info", None)
+
+    if name is None or isinstance(name, str) and len(name) == 0:
         return { "message": "Name is missing." }, 400
     if categories is None:
         return { "message": "Categories is missing." }, 400
@@ -124,8 +136,12 @@ def create_buy_order():
 @employee_blueprint.route("/create_sell_order", methods = ["POST"])
 @role_check(Role.EMPLOYEE)
 def create_sell_order():
-    id = request.json.get("id", None)
-    selling_price = request.json.get("selling_price", None)
+    body = request.get_json(silent=True)
+    if body is None:
+        return { "message": "Request body must be JSON." }, 400
+
+    id = body.get("id", None)
+    selling_price = body.get("selling_price", None)
 
     if id is None:
         return { "message": "Id is missing." }, 400
