@@ -1,0 +1,73 @@
+services:
+  mongo:
+    image: mongo:7.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      timeout: 10s
+      retries: 10
+  mongoExpress:
+    image: mongo-express:1.0
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=root
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_BASICAUTH=false
+    ports:
+      - 8081:8081
+    depends_on:
+      mongo:
+        condition: service_healthy
+  redis:
+    image: redis:7.4
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 10s
+      retries: 10
+  redisInsight:
+    image: redis/redisinsight:2.60
+    ports:
+      - 5540:5540
+    depends_on:
+      redis:
+        condition: service_healthy
+  employee:
+    image: iep-employee:1.0
+    environment:
+      - MONGO_USERNAME=root
+      - MONGO_PASSWORD=root
+      - MONGO_URL=mongo
+      - MONGO_PORT=27017
+      - REDIS_URL=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET_KEY=JWT_SECRET_KEY
+    ports:
+      - 5002:5001
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  director:
+    image: iep-director:1.0
+    environment:
+      - MONGO_USERNAME=root
+      - MONGO_PASSWORD=root
+      - MONGO_URL=mongo
+      - MONGO_PORT=27017
+      - REDIS_URL=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET_KEY=JWT_SECRET_KEY
+    ports:
+      - 5003:5001
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
