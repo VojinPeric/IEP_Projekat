@@ -55,6 +55,16 @@ spec:
                 secretKeyRef:
                   name: jwt-key
                   key: value
+            - name: GANACHE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: service-config
+                  key: ganache-host
+            - name: GANACHE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: service-config
+                  key: ganache-port
 ---
 apiVersion: v1
 kind: Service
