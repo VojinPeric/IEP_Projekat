@@ -19,6 +19,7 @@ services:
   migrator:
     image: iep-auth-migration:2.0
     environment:
+      - MYSQL_DATABASE=authentication
       - MYSQL_USERNAME=root
       - MYSQL_PASSWORD=root
       - MYSQL_URL=database
@@ -30,6 +31,7 @@ services:
   application:
     image: iep-auth:1.0
     environment:
+      - MYSQL_DATABASE=authentication
       - MYSQL_USERNAME=root
       - MYSQL_PASSWORD=root
       - MYSQL_URL=database
