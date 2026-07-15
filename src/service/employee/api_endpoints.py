@@ -79,6 +79,12 @@ def search():
     results = list(properties.find(query))
     for result in results:
         result["id"] = str(result.pop("_id"))
+        result["buying_date"] = result["buying_date"].isoformat()
+        if result.get("selling_price") is None:
+            result.pop("selling_price", None)
+            result.pop("selling_date", None)
+        else:
+            result["selling_date"] = result["selling_date"].isoformat()
 
     return { "assets": results }, 200
 
@@ -95,13 +101,13 @@ def create_buy_order():
     info = body.get("info", None)
 
     if name is None or isinstance(name, str) and len(name) == 0:
-        return { "message": "Name is missing." }, 400
+        return { "message": "Field name is missing." }, 400
     if categories is None:
-        return { "message": "Categories is missing." }, 400
+        return { "message": "Field categories is missing." }, 400
     if buying_price is None:
-        return { "message": "Buying price is missing." }, 400
+        return { "message": "Field buying_price is missing." }, 400
     if info is None:
-        return { "message": "Buying price is missing." }, 400
+        return { "message": "Field info is missing." }, 400
     
     if not isinstance(name, str):
         return { "message": "Name must be string." }, 400
@@ -143,10 +149,10 @@ def create_sell_order():
     id = body.get("id", None)
     selling_price = body.get("selling_price", None)
 
-    if id is None:
-        return { "message": "Id is missing." }, 400
+    if id is None or isinstance(id, str) and len(id) == 0:
+        return { "message": "Field id is missing." }, 400
     if selling_price is None:
-        return { "message": "Selling price is missing." }, 400
+        return { "message": "Field selling_price is missing." }, 400
     
     if not isinstance(selling_price, int) or selling_price <= 0:
         return { "message": "Invalid selling price." }, 400

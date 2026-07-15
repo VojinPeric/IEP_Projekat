@@ -1,5 +1,6 @@
+import re
+
 from flask import Blueprint, request
-from email.utils import parseaddr
 
 from flask_jwt_extended import create_access_token, get_jwt_identity
 from sqlalchemy import and_;
@@ -8,6 +9,8 @@ from models import User, Role, database
 from shared.credential_decorators import role_check;
 
 auth_blueprint = Blueprint("auth", __name__)
+
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]{2,}$")
 
 def correct_password_format(password):
     return len(password) >= 8
@@ -20,13 +23,13 @@ def register():
     password = request.json.get("password", "")
 
     if forename == "":
-        return { "message": "Forename is missing." }, 400
+        return { "message": "Field forename is missing." }, 400
     if surname == "":
-        return { "message": "Surname is missing." }, 400
+        return { "message": "Field surname is missing." }, 400
     if email == "":
-        return { "message": "Email is missing." }, 400
+        return { "message": "Field email is missing." }, 400
     if password == "":
-        return { "message": "Password is missing." }, 400
+        return { "message": "Field password is missing." }, 400
 
     if len(forename) > 256:
         return { "message": "Forename must be at most 256 characters." }, 400
@@ -37,7 +40,7 @@ def register():
     if len(password) > 256:
         return { "message": "Password must be at most 256 characters." }, 400
 
-    if len(parseaddr(email)[1]) == 0:
+    if not EMAIL_RE.match(email):
         return { "message": "Invalid email." }, 400
     if not correct_password_format(password):
         return { "message": "Invalid password." }, 400
@@ -58,16 +61,16 @@ def login():
     password = request.json.get("password", "")
 
     if email == "":
-        return { "message": "Email is missing." }, 400
+        return { "message": "Field email is missing." }, 400
     if password == "":
-        return { "message": "Password is missing." }, 400
-    
+        return { "message": "Field password is missing." }, 400
+
     if len(email) > 256:
         return { "message": "Email must be at most 256 characters." }, 400
     if len(password) > 256:
         return { "message": "Password must be at most 256 characters." }, 400
-    
-    if len(parseaddr(email)[1]) == 0:
+
+    if not EMAIL_RE.match(email):
         return { "message": "Invalid email." }, 400
     user = User.query.filter(and_(User.email == email, User.password == password)).first()
     if user is None:

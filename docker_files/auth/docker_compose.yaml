@@ -17,7 +17,7 @@ services:
       database:
         condition: service_healthy
   migrator:
-    image: iep-auth-migration:2.0
+    image: iep-auth-migration:1.0
     environment:
       - MYSQL_DATABASE=authentication
       - MYSQL_USERNAME=root

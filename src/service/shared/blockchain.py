@@ -1,28 +1,17 @@
+import json
 import os
 
-import solcx
 from web3 import Web3
 
 from service.shared.configuration import Configuration
 
-CONTRACT_PATH = os.path.join(os.path.dirname(__file__), "contracts", "Proposal.sol")
-SOLIDITY_VERSION = "0.8.24"
-
-solcx.install_solc(SOLIDITY_VERSION)
+CONTRACT_PATH = os.path.join(os.path.dirname(__file__), "contracts", "Proposal.json")
 
 with open(CONTRACT_PATH, "r") as file:
-    contract_source = file.read()
-
-compiled = solcx.compile_source(
-    contract_source,
-    output_values = ["abi", "bin"],
-    solc_version = SOLIDITY_VERSION
-)
-
-_, contract_interface = compiled.popitem()
+    contract_interface = json.load(file)
 
 CONTRACT_ABI = contract_interface["abi"]
-CONTRACT_BYTECODE = contract_interface["bin"]
+CONTRACT_BYTECODE = contract_interface["bytecode"]
 
 web3 = Web3(Web3.HTTPProvider(Configuration.GANACHE_URI))
 

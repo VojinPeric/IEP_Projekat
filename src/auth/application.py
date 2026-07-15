@@ -8,7 +8,7 @@ from models import database;
 application = Flask(__name__)
 application.config.from_object(Configuration)
 
-application.register_blueprint (auth_blueprint, url_prefix = "/auth")
+application.register_blueprint (auth_blueprint)
 
 jwt = JWTManager(application)
 

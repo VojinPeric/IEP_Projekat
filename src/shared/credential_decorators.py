@@ -1,6 +1,7 @@
 
 from functools import wraps
 from flask_jwt_extended import get_jwt, verify_jwt_in_request
+from flask_jwt_extended.exceptions import NoAuthorizationError
 
 # checks role if any, if none checks token
 def role_check ( role ):
@@ -12,6 +13,6 @@ def role_check ( role ):
             if role is None or claims.get("role") == role.value:
                 return function ( *arguments, **keywordArguments );
             else:
-                return { "message": "Permission denied."}, 403
+                raise NoAuthorizationError("Missing Authorization Header")
         return decorator
-    return wrapper;   
+    return wrapper;
