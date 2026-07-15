@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: authentication-db-migration
+  labels:
+    app: authentication-db-migration
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 120
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: authentication-db-migration
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: authenticationdbmigration
+          image: iep-auth-migration:1.0
+          env:
+            - name: MYSQL_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: authentication-config
+                  key: db-username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-password
+                  key: password
+            - name: MYSQL_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: authentication-config
+                  key: db-host
+            - name: MYSQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: authentication-config
+                  key: db-port
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: authentication-config
+                  key: db-name
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-key
+                  key: value

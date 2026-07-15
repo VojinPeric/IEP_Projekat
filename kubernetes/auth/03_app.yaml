@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication-deployment
+  labels:
+    app: authentication
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication
+  template:
+    metadata:
+      labels:
+        app: authentication
+    spec:
+      containers:
+        - name: authentication
+          image: iep-auth:1.0
+          ports:
+            - containerPort: 5001
+          env:
+            - name: MYSQL_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: authentication-config
+                  key: db-username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-password
+                  key: password
+            - name: MYSQL_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: authentication-config
+                  key: db-host
+            - name: MYSQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: authentication-config
+                  key: db-port
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: authentication-config
+                  key: db-name
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-key
+                  key: value
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentication-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: authentication
+  ports:
+    - protocol: TCP
+      port: 5001 # actual port
+      targetPort: 5001

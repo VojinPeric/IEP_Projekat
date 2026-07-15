@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-password
+type: Opaque
+data:
+  password: cm9vdA== # root
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-key
+type: Opaque
+data:
+  value: SldUX1NFQ1JFVF9LRVk= # JWT_SECRET_KEY
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-password
+type: Opaque
+data:
+  password: cm9vdA== # root
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentication-config
+data:
+  db-host: authentication-db-service
+  db-username: root
+  db-port: "3306"
+  db-name: authentication
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-config
+data:
+  db-host: mongo-db-service
+  db-username: root
+  db-port: "27017"
+  redis-host: redis-service
+  redis-port: "6379"
+  ganache-host: ganache-service
+  ganache-port: "8545"
