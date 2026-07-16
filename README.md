@@ -92,7 +92,7 @@ kubectl rollout status deployment director-deployment
 
 ### Cleanup (reverse order, or just delete by file)
 kubectl delete -f kubernetes/service/02_app.yaml
-kubectl delete -f kubernetes/service/01_db_redis.yaml
+kubectl delete -f kubernetes/service/01_db_redis_provider.yaml
 kubectl delete -f kubernetes/auth/03_app.yaml
 kubectl delete -f kubernetes/auth/02_migration.yaml
 kubectl delete -f kubernetes/auth/01_db.yaml
