@@ -16,7 +16,7 @@ def resolve_order(redis, entry, order):
 
     votes_for = contract.functions.votesFor().call()
     votes_against = contract.functions.votesAgainst().call()
-    majority = len(order["voters"]) // 2 + 1
+    majority = contract.functions.votersCount().call() // 2 + 1
 
     if votes_for >= majority:
         if order["order_type"] == "BUY":

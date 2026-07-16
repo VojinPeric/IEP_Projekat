@@ -21,6 +21,10 @@ contract Proposal {
         _vote(false);
     }
 
+    function votersCount() external view returns (uint256) {
+        return voters.length;
+    }
+
     function _vote(bool support) private {
         require(_isVoter(msg.sender), "Invalid address.");
         require(!_votingEnded(), "Voting ended.");

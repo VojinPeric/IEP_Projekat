@@ -24,7 +24,6 @@ def pending_orders():
     for entry in entries:
         order = json.loads(entry)
         order.pop("contract_address", None)
-        order.pop("voters", None)
         orders.append(order)
 
     return { "orders": orders }, 200
@@ -45,7 +44,6 @@ def blockchain_decision(order, matched_entry, voters):
     reject_transaction = proposal_contract.functions.reject().build_transaction({ "from": admin_account, "gas": 300000, "gasPrice": 1000000000 })
 
     order["contract_address"] = proposal_contract.address
-    order["voters"] = voters
 
     with Redis(host = Configuration.REDIS_HOST, port = Configuration.REDIS_PORT) as redis:
         redis.lrem(Configuration.REDIS_ORDER_LIST, 1, matched_entry)
