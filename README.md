@@ -26,6 +26,13 @@ pip index versions <dep_name>
 ### Build
 docker build -t <image_name_version>(iep-auth-migration:1.0) -f <filepath>(docker_files/auth/migration.dockerfile) .
 
+### Quick build from project root
+docker build -f docker_files/auth/migration.dockerfile -t iep-auth-migration:1.0 .
+docker build -f docker_files/auth/authorization.dockerfile -t iep-auth:1.0 .                       
+docker build -f docker_files/service/employee.dockerfile -t iep-employee:1.0 .
+docker build -f docker_files/service/director.dockerfile -t iep-director:1.0 .
+docker build -f docker_files/service/vote_listener.dockerfile -t iep-vote-listener:1.0 .
+
 ### Run
 docker run <image_name_version>
 

@@ -22,7 +22,8 @@ contract Proposal {
     }
 
     function _vote(bool support) private {
-        require(_isVoter(msg.sender), "Not eligible");
+        require(_isVoter(msg.sender), "Invalid address.");
+        require(!_votingEnded(), "Voting ended.");
         require(!hasVoted[msg.sender], "Already voted");
 
         hasVoted[msg.sender] = true;
@@ -42,5 +43,10 @@ contract Proposal {
             }
         }
         return false;
+    }
+
+    function _votingEnded() private view returns (bool) {
+        uint256 majority = voters.length / 2 + 1;
+        return votesFor >= majority || votesAgainst >= majority;
     }
 }
