@@ -49,11 +49,11 @@ kubectl cluster-info                                # confirm the API server is 
 
 ### Apply (run in order, wait for each to be ready before the next)
 kubectl apply -f kubernetes/00_config.yaml                 # secrets + configmaps first, everything else reads from these
-kubectl apply -f kubernetes/auth/01_db.yaml                 # mysql pv/pvc/deployment/service
-kubectl apply -f kubernetes/auth/02_migration.yaml          # one-shot Job, only after mysql pod is Ready
-kubectl apply -f kubernetes/auth/03_app.yaml                # auth app deployment + LoadBalancer service
-kubectl apply -f kubernetes/service/01_db_redis.yaml        # mongo/redis/ganache
-kubectl apply -f kubernetes/service/02_app.yaml             # employee/director/vote-listener
+kubectl apply -f kubernetes/auth/01_db.yaml                         # mysql pv/pvc/deployment/service
+kubectl apply -f kubernetes/auth/02_migration.yaml                  # one-shot Job, only after mysql pod is Ready
+kubectl apply -f kubernetes/auth/03_app.yaml                        # auth app deployment + LoadBalancer service
+kubectl apply -f kubernetes/service/01_db_redis_provider.yaml       # mongo/redis/ganache
+kubectl apply -f kubernetes/service/02_app.yaml                     # employee/director/vote-listener
 
 ### Dry run before applying (catches schema errors without creating anything)
 kubectl apply --dry-run=client -f <file>            # validates locally
