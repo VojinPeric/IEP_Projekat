@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wipe-mongo-data
+spec:
+  ttlSecondsAfterFinished: 30
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: wipe
+          image: busybox
+          command: ["sh", "-c", "rm -rf /data/* /data/.[!.]* 2>/dev/null; echo mongo data wiped"]
+          volumeMounts:
+            - mountPath: /data
+              name: vol
+      volumes:
+        - name: vol
+          hostPath:
+            path: "/mnt/data/mongo-db"
+            type: DirectoryOrCreate
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wipe-mysql-data
+spec:
+  ttlSecondsAfterFinished: 30
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: wipe
+          image: busybox
+          command: ["sh", "-c", "rm -rf /data/* /data/.[!.]* 2>/dev/null; echo mysql data wiped"]
+          volumeMounts:
+            - mountPath: /data
+              name: vol
+      volumes:
+        - name: vol
+          hostPath:
+            path: "/mnt/data/mysql-db"
+            type: DirectoryOrCreate

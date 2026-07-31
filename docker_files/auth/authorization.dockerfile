@@ -1,13 +1,9 @@
-FROM python:3.13-slim
+FROM iep-base:1.0
 
 RUN mkdir -p /opt/src/auth
 RUN mkdir -p /opt/src/shared
 
 WORKDIR /opt/src
-
-COPY requirements.txt ./requirements.txt
-
-RUN pip install -r ./requirements.txt
 
 COPY src/auth/application.py ./auth/application.py
 COPY src/auth/api_endpoints.py ./auth/api_endpoints.py

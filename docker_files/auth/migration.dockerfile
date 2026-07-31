@@ -1,11 +1,7 @@
-FROM python:3.13-slim
+FROM iep-base:1.0
 
 RUN mkdir -p /opt/src/auth
 WORKDIR /opt/src/auth
-
-COPY requirements.txt ./requirements.txt
-
-RUN pip install -r ./requirements.txt
 
 COPY src/auth/migrate.py ./migrate.py
 COPY src/auth/configuration.py ./configuration.py

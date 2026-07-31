@@ -11,7 +11,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/Users/Vojin/Desktop/Projects/Fakultet/Cetvrta Godina/IEP/project/temp/mysql" # change to match Docker VM Path
+    path: "/mnt/data/mysql-db" # path on the (Linux) node itself, identical on Windows/macOS hosts
     type: DirectoryOrCreate
 ---
 apiVersion: v1

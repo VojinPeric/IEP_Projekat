@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM iep-base:1.0
 
 RUN mkdir -p /opt/src/auth
 RUN mkdir -p /opt/src/shared
@@ -6,10 +6,6 @@ RUN mkdir -p /opt/src/service/shared
 RUN mkdir -p /opt/src/service/director
 
 WORKDIR /opt/src
-
-COPY requirements.txt ./requirements.txt
-
-RUN pip install -r ./requirements.txt
 
 COPY src/auth/models.py ./auth/models.py
 COPY src/shared/credential_decorators.py ./shared/credential_decorators.py

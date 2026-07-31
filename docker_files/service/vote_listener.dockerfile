@@ -1,13 +1,9 @@
-FROM python:3.13-slim
+FROM iep-base:1.0
 
 RUN mkdir -p /opt/src/service/shared
 RUN mkdir -p /opt/src/service/director
 
 WORKDIR /opt/src
-
-COPY requirements.txt ./requirements.txt
-
-RUN pip install -r ./requirements.txt
 
 COPY src/service/shared/configuration.py ./service/shared/configuration.py
 COPY src/service/shared/models.py ./service/shared/models.py
