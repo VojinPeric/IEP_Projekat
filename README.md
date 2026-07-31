@@ -166,6 +166,7 @@ kubectl get nodes                                    # potvrda da je node Ready
 ### Faza 2 — Sve sto zahteva internet (raditi odmah, dok traje prvih 30 minuta)
 
 # image-i koje kubernetes/*.yaml direktno povlaci (baze, ganache, busybox za reset-volumes.yaml)
+docker pull python:3.13-slim
 docker pull mongo:7.0
 docker pull redis:7.4
 docker pull mysql:8.0
@@ -199,6 +200,15 @@ python -m venv .venv
 source .venv/bin/activate                            # .venv\Scripts\Activate.ps1 na Windows-u
 pip install -r requirements-pytest.txt
 
+# venv + zavisnosti za utils/compile_proposal.py (solcx nije i ne sme biti u project/requirements.txt -
+# nijedan servis ga ne koristi u runtime-u, samo ovaj rucni compile korak; poseban venv drzi ga odvojeno)
+cd ../project
+python -m venv utils/venv
+source utils/venv/bin/activate                       # utils\venv\Scripts\Activate.ps1 na Windows-u
+pip install -r utils/requirements.txt
+python -c "import solcx; solcx.install_solc('0.8.24')"   # preuzima solc binarni fajl, kesira se u ~/.solcx, offline posle ovoga
+deactivate
+
 ### Faza 3 — Deploy na Kubernetes (offline, redosled bitan, cekati Ready pre sledeceg koraka)
 
 kubectl apply -f kubernetes/00_config.yaml
@@ -221,8 +231,8 @@ kubectl rollout status deployment employee-deployment
 kubectl rollout status deployment director-deployment
 kubectl rollout status deployment vote-listener-deployment
 
-kubectl get pods                                    # sve Running/Completed, 0 restarts
-kubectl get services                                 # EXTERNAL-IP je localhost na Docker Desktop
+kubectl get pods                                    
+kubectl get services                                 
 
 # Ocekivani LoadBalancer portovi (iz kubernetes/*.yaml, koriste se u komandi za testove ispod):
 #   authentication-service  -> http://127.0.0.1:5001
@@ -258,6 +268,17 @@ kubectl rollout status deployment employee-deployment
 #    "FROM python:3.13-slim", i ne sme da sadrzi "RUN pip install ..." - paketi su vec u base
 #    image-u, pa ni ovakav, nikad ranije build-ovan Dockerfile ne zahteva internet
 
+# c) izmena ugovora (src/service/shared/contracts/Proposal.sol) i regeneracija Proposal.json -
+#    offline je jer je solc 0.8.24 vec kesiran u Fazi 2 preko solcx.install_solc(...)
+source utils/venv/bin/activate                       # utils\venv\Scripts\Activate.ps1 na Windows-u
+python utils/compile_proposal.py
+deactivate
+docker build -f docker_files/service/director.dockerfile -t iep-director:1.0 .
+docker build -f docker_files/service/vote_listener.dockerfile -t iep-vote-listener:1.0 .
+kubectl rollout restart deployment director-deployment vote-listener-deployment
+kubectl rollout status deployment director-deployment
+kubectl rollout status deployment vote-listener-deployment
+
 ### Faza 6 — Rusenje svih komponenti sa klastera (offline, obrnut redosled od Faze 3)
 
 kubectl delete -f kubernetes/service/02_app.yaml
@@ -267,8 +288,8 @@ kubectl delete -f kubernetes/auth/02_migration.yaml
 kubectl delete -f kubernetes/auth/01_db.yaml
 kubectl delete -f kubernetes/00_config.yaml
 kubectl delete pv mongopv localpv --ignore-not-found
-kubectl get all                                      # provera da nista nije ostalo (samo kubernetes default service)
-kubectl get pv,pvc                                   # provera da nema zaostalih volumena
+kubectl get all                                      
+kubectl get pv,pvc                                   
 
 # za prazne baze pre sledeceg apply-a, videti "Wipe volumes for a fresh reset" iznad
 
