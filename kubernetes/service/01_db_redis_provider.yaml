@@ -11,7 +11,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data/mongo-db" # path on the (Linux) node itself, identical on Windows/macOS hosts
+    path: "/mnt/data/mongo-db"
     type: DirectoryOrCreate
 ---
 apiVersion: v1
