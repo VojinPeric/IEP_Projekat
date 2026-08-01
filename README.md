@@ -184,29 +184,31 @@ docker build -f docker_files/auth/authorization.dockerfile -t iep-auth:1.0 .
 docker build -f docker_files/service/employee.dockerfile -t iep-employee:1.0 .
 docker build -f docker_files/service/director.dockerfile -t iep-director:1.0 .
 docker build -f docker_files/service/vote_listener.dockerfile -t iep-vote-listener:1.0 .
-docker images | grep -E "iep|mongo|redis|mysql|ganache|busybox"    # provera da je svih 11 image-a lokalno
+docker images | grep -E "iep|mongo|redis|mysql|ganache|busybox"   
 
 # venv + zavisnosti za sam projekat (ako treba lokalno van dockera, npr. za migrate.py)
 cd project
 python -m venv venv
-source venv/bin/activate                             # venv\Scripts\Activate.ps1 na Windows-u
+source venv/bin/activate                            
 pip install --upgrade pip
 pip install -r requirements.txt
 
 # venv + zavisnosti za grader/test projekat (ovaj se pokrece samo lokalno, van Dockera,
 # pa je dovoljno instalirati direktno u venv, bez wheelhouse-a)
+prvo dodati setuptools<81 u requirements-pytest.txt
+
 cd ../iep_grader
 python -m venv .venv
-source .venv/bin/activate                            # .venv\Scripts\Activate.ps1 na Windows-u
+source .venv/bin/activate                           
 pip install -r requirements-pytest.txt
 
 # venv + zavisnosti za utils/compile_proposal.py (solcx nije i ne sme biti u project/requirements.txt -
 # nijedan servis ga ne koristi u runtime-u, samo ovaj rucni compile korak; poseban venv drzi ga odvojeno)
 cd ../project
 python -m venv utils/venv
-source utils/venv/bin/activate                       # utils\venv\Scripts\Activate.ps1 na Windows-u
+source utils/venv/bin/activate                      
 pip install -r utils/requirements.txt
-python -c "import solcx; solcx.install_solc('0.8.24')"   # preuzima solc binarni fajl, kesira se u ~/.solcx, offline posle ovoga
+python -c "import solcx; solcx.install_solc('0.8.24')"  
 deactivate
 
 ### Faza 3 — Deploy na Kubernetes (offline, redosled bitan, cekati Ready pre sledeceg koraka)
